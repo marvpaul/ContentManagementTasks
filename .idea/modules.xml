@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DSContentManagement.iml" filepath="$PROJECT_DIR$/DSContentManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Notebook1/Notebook1.iml" filepath="$PROJECT_DIR$/Notebook1/Notebook1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Notebook2/Notebook2.iml" filepath="$PROJECT_DIR$/Notebook2/Notebook2.iml" />
+    </modules>
+  </component>
+</project>
