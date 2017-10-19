@@ -38,10 +38,9 @@ def saveImageFromArticle(link):
     with open((dir + '/' + name + '.png'), 'wb') as f:
         f.write(request.urlopen(imageLink).read())
 
-
-comicLinks = getComicLinks()[0:10]
-
-for link in comicLinks:
-    saveImageFromArticle(link.attr('href'))
+def downloadSeveralImages():
+    comicLinks = getComicLinks()[0:10]
+    for link in comicLinks:
+        saveImageFromArticle(link.attr('href'))
 
 
