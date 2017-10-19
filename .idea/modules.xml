@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/DSContentManagement.iml" filepath="$PROJECT_DIR$/DSContentManagement.iml" />
       <module fileurl="file://$PROJECT_DIR$/Notebook1/Notebook1.iml" filepath="$PROJECT_DIR$/Notebook1/Notebook1.iml" />
       <module fileurl="file://$PROJECT_DIR$/Notebook2/Notebook2.iml" filepath="$PROJECT_DIR$/Notebook2/Notebook2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Notebook3/Notebook3.iml" filepath="$PROJECT_DIR$/Notebook3/Notebook3.iml" />
     </modules>
   </component>
 </project>
