@@ -3,37 +3,71 @@ import Graded1.Node as Node
 class Tree:
     dataTree = None
 
-    #TODO: This have to be a recursive method call for creating a nice tree :)
-    def getFirstFeatureToSplit(self, data, features):
+    def evealuteData(self, data):
+        survived = []
+        for entry in data:
+            actualNode = self.dataTree
+
+            survived.append((self.getDecision(actualNode, entry)))
+        return survived
+
+    def getDecision(self, node, entry):
+            if node.feature == "Survived":
+                return node.decisions[0]
+            return self.getDecision(node.following_nodes[node.decisions.index(entry[node.feature])], entry)
+
+    '''
+    Recursive method to determine the hopefully best fitting decision tree for given data & features'''
+    def getTree(self, data, features):
         entropies = []
         for feature in features:
             entropies.append(self.getEntireEntropy(self.getPropRec(data, [feature])))
         min_value = min(entropies)
         min_index = entropies.index(min_value)
-        print("Oh yeah! The best decision is to split for" + features[min_index])
         self.dataTree = Node.Node(features[min_index])
-        self.getSecondFeatureToSplit(data, features, self.dataTree)
+        self.getTreeRec(data, features, self.dataTree)
 
 
-    def getSecondFeatureToSplit(self, data, features, node):
+    '''
+    This method calculates the hopefully best decision tree for given features and data :)
+    '''
+    def getTreeRec(self, data, features, node):
         #This feature is obsolete / used
-        features.remove(self.dataTree.feature)
+        localFeatures = features
+        localFeatures.remove(node.feature)
 
-        data, labels = self.splitData(data, self.dataTree.feature)
+        data, labels = self.splitData(data, node.feature)
         #For each possible decision get the best fitting feature
         for label_nr in range(len(labels)):
             entropies = []
-            for feature in features:
+            for feature in localFeatures:
                 entropies.append(self.getEntireEntropy(self.getPropRec(data[label_nr], [feature])))
             min_value = min(entropies)
             min_index = entropies.index(min_value)
-            node.following_nodes.append(Node.Node(feature[min_index]))
+
+            nextNode = Node.Node(features[min_index])
+            node.following_nodes.append(nextNode)
             node.decisions.append(labels[label_nr])
-            print("Oh yeah! The best decision is to split for" + features[min_index])
-            print(min_value, labels[label_nr])
+            if len(localFeatures) > 1:
+                self.getTreeRec(data[label_nr], localFeatures, nextNode)
+            #end reached
+            else:
+                nextNode.feature = "Survived"
+                nextNode.decisions = [self.survivedOrNot(data[label_nr])]
 
 
-
+    '''Return 1 if most of the data entry people have survived'''
+    def survivedOrNot(self, data):
+        amount_class1 = 0
+        amount_class2 = 0
+        for entry in data:
+            if int(entry['Survived']) == 0:
+                amount_class1 += 1
+            else:
+                amount_class2 += 1
+        if amount_class2 > amount_class1:
+            return 1
+        return 0
 
 
     '''

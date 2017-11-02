@@ -62,7 +62,21 @@ print(simplifiedData)
 
 features = ['Pclass', 'Sex', 'Age', 'Family_size']
 tree1 = tree.Tree()
-tree1.getFirstFeatureToSplit(simplifiedData, features)
+tree1.getTree(simplifiedData, features)
+survived = tree1.evealuteData(data)
+
+
+actualSurvived = []
+for entry in data:
+    actualSurvived.append(int(entry['Survived']))
+
+counter = 0
+for i in range(len(survived)):
+    if survived[i] == actualSurvived[i]:
+        counter += 1
+
+print(counter / len(data))
+
 
 #p = tree1.computeProps(simplifiedData)
 #entireEntropy = tree1.computeEntropy(p)
