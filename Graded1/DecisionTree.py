@@ -14,7 +14,11 @@ class Tree:
     def getDecision(self, node, entry):
             if node.feature == "Survived":
                 return node.decisions[0]
-            return self.getDecision(node.following_nodes[node.decisions.index(entry[node.feature])], entry)
+            elif entry[node.feature] in node.decisions:
+                return self.getDecision(node.following_nodes[node.decisions.index(entry[node.feature])], entry)
+            #TODO: Get a better idea what todo here
+            print("Sth")
+            return 0
 
     '''
     Recursive method to determine the hopefully best fitting decision tree for given data & features'''

@@ -44,27 +44,63 @@ def categorizeAge(data):
     for entry in data:
         if entry['Age'] == "":
             entry['Age'] = "0"
-        elif float(entry['Age']) <= 18:
+        elif float(entry['Age']) <= 15:
             entry['Age'] = "1"
-        elif float(entry['Age']) <= 55:
+        elif float(entry['Age']) <= 35:
             entry['Age'] = "2"
-        else:
+        elif float(entry['Age']) <= 50:
             entry['Age'] = "3"
+        else:
+            entry['Age'] = "4"
     return data
 
-header, data = readData("train.csv")
+def categorizeCabin(data):
+    for entry in data:
+        if "A" in entry['Cabin'] or "B" in entry['Cabin'] or "C" in entry['Cabin']:
+            entry['Cabin'] = 1
+        elif "D" in entry['Cabin'] or "E" in entry['Cabin']:
+            entry['Cabin'] = 2
+        else:
+            entry['Cabin'] = 3
+    return data
 
-data = createDic(header, data)
-data = addFamilySizeFeature(data)
-simplifiedData = deleteUnimportantData(data, ["Name", "Ticket", "Fare", "Cabin", "Embarked", "Parch", "SibSp"])
-simplifiedData = categorizeAge(simplifiedData)
-print(simplifiedData)
+def prepareData(path):
+    header, data = readData(path)
+    data = createDic(header, data)
+    data = addFamilySizeFeature(data)
+    simplifiedData = deleteUnimportantData(data, ["Name", "Ticket", "Fare", "Parch", "SibSp"])
+    simplifiedData = categorizeAge(simplifiedData)
+    simplifiedData = categorizeCabin(simplifiedData)
+    return simplifiedData
 
+
+data = prepareData("train.csv")
+
+#Features to use for decision tree
 features = ['Pclass', 'Sex', 'Age', 'Family_size']
+
+#Create a tree with given trainingsdata and selected features
 tree1 = tree.Tree()
-tree1.getTree(simplifiedData, features)
+tree1.getTree(data, features)
+
+#First evaluation
 survived = tree1.evealuteData(data)
 
+testData = prepareData("test.csv")
+survivedTest = tree1.evealuteData(testData)
+
+header, dataset = readData("test_validation.csv")
+real_data = createDic(header, dataset)
+
+real_survived = []
+for entry in real_data:
+    real_survived.append(int(entry['Survived']))
+counter = 0
+for i in range(len(survivedTest)):
+    if survivedTest[i] == real_survived[i]:
+        counter += 1
+
+print(counter / len(testData), "Real rate")
 
 actualSurvived = []
 for entry in data:
@@ -76,13 +112,3 @@ for i in range(len(survived)):
         counter += 1
 
 print(counter / len(data))
-
-
-#p = tree1.computeProps(simplifiedData)
-#entireEntropy = tree1.computeEntropy(p)
-#print("Entropy", entireEntropy)
-props = tree1.getPropRec(simplifiedData, ['Sex', 'Family_size', 'Age'])
-
-
-
-#print("Entropy splitted by Sex: ", tree.computeEntropy(props))
