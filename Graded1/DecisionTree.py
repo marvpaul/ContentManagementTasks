@@ -17,7 +17,7 @@ class Tree:
             elif entry[node.feature] in node.decisions:
                 return self.getDecision(node.following_nodes[node.decisions.index(entry[node.feature])], entry)
             #TODO: Get a better idea what todo here
-            print("Sth")
+            print("Uncategorized entry :/ Not coool ...")
             return 0
 
     '''

@@ -36,15 +36,10 @@ def addFamilySizeFeature(data):
     return data
 
 def categorizeAge(data):
-    categoriez = {
-        "child" : [0, 14],
-        "adult" : [15, 50],
-        "old" : [51, 100]
-    }
     for entry in data:
         if entry['Age'] == "":
             entry['Age'] = "0"
-        elif float(entry['Age']) <= 15:
+        elif float(entry['Age']) <= 16:
             entry['Age'] = "1"
         elif float(entry['Age']) <= 35:
             entry['Age'] = "2"
@@ -77,7 +72,7 @@ def prepareData(path):
 data = prepareData("train.csv")
 
 #Features to use for decision tree
-features = ['Pclass', 'Sex', 'Age', 'Family_size']
+features = ['Pclass', 'Sex', 'Age', 'Family_size']# 'Cabin'®
 
 #Create a tree with given trainingsdata and selected features
 tree1 = tree.Tree()
@@ -86,6 +81,7 @@ tree1.getTree(data, features)
 #First evaluation
 survived = tree1.evealuteData(data)
 
+#Load and evaluate test data o.o
 testData = prepareData("test.csv")
 survivedTest = tree1.evealuteData(testData)
 
@@ -100,7 +96,7 @@ for i in range(len(survivedTest)):
     if survivedTest[i] == real_survived[i]:
         counter += 1
 
-print(counter / len(testData), "Real rate")
+print(counter / len(testData), " accuracy. Whats going on here? :S")
 
 actualSurvived = []
 for entry in data:
