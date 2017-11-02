@@ -1,5 +1,6 @@
 import csv
 import Graded1.DecisionTree as tree
+import numpy as np
 
 def readData(path):
     data = []
@@ -34,14 +35,40 @@ def addFamilySizeFeature(data):
         entry['Family_size'] = int(entry['SibSp']) + int(entry['Parch'])
     return data
 
+def categorizeAge(data):
+    categoriez = {
+        "child" : [0, 14],
+        "adult" : [15, 50],
+        "old" : [51, 100]
+    }
+    for entry in data:
+        if entry['Age'] == "":
+            entry['Age'] = "0"
+        elif float(entry['Age']) <= 18:
+            entry['Age'] = "1"
+        elif float(entry['Age']) <= 55:
+            entry['Age'] = "2"
+        else:
+            entry['Age'] = "3"
+    return data
+
 header, data = readData("train.csv")
 
 data = createDic(header, data)
 data = addFamilySizeFeature(data)
 simplifiedData = deleteUnimportantData(data, ["Name", "Ticket", "Fare", "Cabin", "Embarked", "Parch", "SibSp"])
+simplifiedData = categorizeAge(simplifiedData)
 print(simplifiedData)
 
-p = tree.computeProps(data)
-entireEntropy = tree.computeEntropy(p)
-print(entireEntropy)
-print(tree.computeEntropy([1, 0]))
+features = ['Pclass', 'Sex', 'Age', 'Family_size']
+tree1 = tree.Tree()
+tree1.getFirstFeatureToSplit(simplifiedData, features)
+
+#p = tree1.computeProps(simplifiedData)
+#entireEntropy = tree1.computeEntropy(p)
+#print("Entropy", entireEntropy)
+props = tree1.getPropRec(simplifiedData, ['Sex', 'Family_size', 'Age'])
+
+
+
+#print("Entropy splitted by Sex: ", tree.computeEntropy(props))
