@@ -4,9 +4,10 @@ class Node:
     '''
 
     def __init__(self, feature):
+        '''
+        Constructor
+        :param feature: the feature / name of the node
+        '''
         self.feature = feature
         self.following_nodes = []
         self.decisions = []
-
-    def setFollowingNode(self, follow):
-        self.following_nodes.append(follow)
