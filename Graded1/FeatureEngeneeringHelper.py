@@ -119,7 +119,7 @@ class FeatureEngineer:
         return data
 
     def categorizeFare(self, data):
-        '''
+        ''' see here for reference: https://www.kaggle.com/startupsci/titanic-data-science-solutions
         :param data:
         :return:
         '''
@@ -131,18 +131,25 @@ class FeatureEngineer:
             else:
                 sum += float(entry['Fare'])
         mean = sum / (len(data)-missing)
-        mean_low = mean - (mean * 0.66)
-        mean_high = mean + (mean *0.66)
+
         for entry in data:
             if(entry['Fare'] == ""):
-                entry['FareClass'] = 1
-            elif float(entry['Fare']) < mean_low:
-                entry['FareClass'] = 0
-            elif float(entry['Fare']) >= mean_low and float(entry['Fare']) <= mean_high:
-                entry['FareClass'] = 1
-            else:
                 entry['FareClass'] = 2
+            elif float(entry['Fare']) < 8:
+                entry['FareClass'] = 0
+            elif float(entry['Fare']) <= 14.454:
+                entry['FareClass'] = 1
+            elif float(entry['Fare']) <= 31:
+                entry['FareClass'] = 2
+            else:
+                entry['FareClass'] = 3
         return data
+
+    def createAgeClass(self, data):
+        for entry in data:
+            entry['AgeClass'] = float(entry['Age']) * float(entry['Pclass'])
+        return data
+
 
     def createAwesomeDataset(self, data):
         '''
@@ -157,4 +164,5 @@ class FeatureEngineer:
         simplifiedData = self.fillEmbarkedFeature(simplifiedData)
         simplifiedData = self.filterTitles(simplifiedData)
         simplifiedData = self.categorizeFare(data)
+        simplifiedData = self.createAgeClass(data)
         return simplifiedData
