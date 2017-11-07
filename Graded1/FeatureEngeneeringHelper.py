@@ -24,6 +24,10 @@ class FeatureEngineer:
         '''
         for entry in data:
             entry['Family_size'] = int(entry['SibSp']) + int(entry['Parch'])
+            if int(entry['SibSp']) + int(entry['Parch']) == 0:
+                entry['Alone'] = 1
+            else:
+                entry['Alone'] = 0
         return data
 
     def categorizeAge(self, data):
@@ -35,7 +39,11 @@ class FeatureEngineer:
         '''
         for entry in data:
             if entry['Age'] == "":
-                entry['Age'] = "0"
+                #Inspired by: https://www.kaggle.com/ash316/eda-to-prediction-dietanic
+                if entry['Title'] == 'Master':
+                    entry['Age'] = "1"
+                else:
+                    entry['Age'] = "4"
             elif float(entry['Age']) <= 5:
                 entry['Age'] = "1"
             elif float(entry['Age']) <= 12:
@@ -44,11 +52,12 @@ class FeatureEngineer:
                 entry['Age'] = "3"
             elif float(entry['Age']) <= 24:
                 entry['Age'] = "4"
-            elif float(entry['Age']) <= 50:
+            elif float(entry['Age']) <= 60:
                 entry['Age'] = "5"
-            else:
+            elif float(entry['Age']) <= 100:
                 entry['Age'] = "6"
         return data
+
 
     def categorizeCabin(self, data):
         '''
@@ -66,9 +75,9 @@ class FeatureEngineer:
                 entry['Cabin'] = 3
             '''
             if entry['Cabin'] == "":
-                entry['Cabin'] = 0
+                entry['CabinBool'] = 0
             else:
-                entry['Cabin'] = 1
+                entry['CabinBool'] = 1
         return data
 
     def fillEmbarkedFeature(self, data):
@@ -88,8 +97,9 @@ class FeatureEngineer:
             elif entry['Embarked'] == "Q":
                 entry['Embarked'] = 3
             else:
-                #Entry is empty, so fill with the most common value S / 1
-                entry["Embarked"] = 1
+                #Entry is empty, so fill with the most common value C / 2
+                entry["Embarked"] = 2
+        print(data)
         return data
 
     def filterTitles(self, data):
@@ -112,9 +122,9 @@ class FeatureEngineer:
             title.replace('Countess', 'Royal')
             title.replace('Lady', 'Royal')
             title.replace('Sir', 'Royal')
-            title.replace('Mlle', 'Miss')
-            title.replace('Ms', 'Miss')
-            title.replace('Mme', 'Mrs')
+            title.replace('Mlle', 'Rare')
+            title.replace('Ms', 'Rare')
+            title.replace('Mme', 'Rare')
             entry['Title'] = title
         return data
 
@@ -150,7 +160,6 @@ class FeatureEngineer:
             entry['AgeClass'] = float(entry['Age']) * float(entry['Pclass'])
         return data
 
-
     def createAwesomeDataset(self, data):
         '''
         Do some awesome stuff to make the given data "better"
@@ -159,10 +168,10 @@ class FeatureEngineer:
         '''
         data = self.addFamilySizeFeature(data)
         simplifiedData = self.deleteUnimportantData(data, ["Ticket"])
-        simplifiedData = self.categorizeAge(simplifiedData)
         simplifiedData = self.categorizeCabin(simplifiedData)
         simplifiedData = self.fillEmbarkedFeature(simplifiedData)
         simplifiedData = self.filterTitles(simplifiedData)
+        simplifiedData = self.categorizeAge(simplifiedData)
         simplifiedData = self.categorizeFare(data)
-        simplifiedData = self.createAgeClass(data)
+        #simplifiedData = self.createAgeClass(data)
         return simplifiedData

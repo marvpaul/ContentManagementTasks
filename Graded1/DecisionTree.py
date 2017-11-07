@@ -30,6 +30,7 @@ class Tree:
             return node.decisions[0]
         elif entry[node.feature] in node.decisions:
             return self.getDecision(node.following_nodes[node.decisions.index(entry[node.feature])], entry)
+        return 0
 
     def createTree(self, data, features):
         '''
@@ -80,7 +81,7 @@ class Tree:
                 nextNode.feature = "Survived"
                 sub_data = data[label_nr]
                 props_survived = self.computeSurvivalProp(sub_data)
-                if props_survived[0] > props_survived[1]:
+                if props_survived[0] >= props_survived[1]:
                     nextNode.decisions = [0]
                 else:
                     nextNode.decisions = [1]

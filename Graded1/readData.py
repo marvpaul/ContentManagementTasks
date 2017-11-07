@@ -10,7 +10,7 @@ train_data = processor.get('train.csv')
 train_data_edited = feature_processor.createAwesomeDataset(train_data)
 
 #Features to use for decision tree
-features = ['Sex', 'Age', 'Family_size', 'Embarked', 'Cabin', 'AgeClass', 'FareClass'] #Title, Pclass
+features = ['Sex', 'Family_size', 'Age', 'Pclass', 'CabinBool', 'Embarked', 'Title']
 
 #Create a tree with given trainingsdata and selected features
 tree1 = tree.Tree()
