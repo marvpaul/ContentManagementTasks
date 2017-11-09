@@ -99,7 +99,6 @@ class FeatureEngineer:
             else:
                 #Entry is empty, so fill with the most common value C / 2
                 entry["Embarked"] = 2
-        print(data)
         return data
 
     def filterTitles(self, data):
@@ -110,21 +109,21 @@ class FeatureEngineer:
         '''
         for entry in data:
             title = re.search(' ([A-Za-z]+)\.', entry['Name']).group(1)
-            title.replace('Lady', 'Rare')
-            title.replace('Capt', 'Rare')
-            title.replace('Col', 'Rare')
-            title.replace('Don', 'Rare')
-            title.replace('Dr', 'Rare')
-            title.replace('Major', 'Rare')
-            title.replace('Rev', 'Rare')
-            title.replace('Jonkheer', 'Rare')
-            title.replace('Dona', 'Rare')
-            title.replace('Countess', 'Royal')
-            title.replace('Lady', 'Royal')
-            title.replace('Sir', 'Royal')
-            title.replace('Mlle', 'Rare')
-            title.replace('Ms', 'Rare')
-            title.replace('Mme', 'Rare')
+            title = title.replace('Lady', 'Rare')
+            title = title.replace('Capt', 'Rare')
+            title = title.replace('Col', 'Rare')
+            title = title.replace('Don', 'Rare')
+            title = title.replace('Dr', 'Rare')
+            title = title.replace('Major', 'Rare')
+            title = title.replace('Rev', 'Rare')
+            title = title.replace('Jonkheer', 'Rare')
+            title = title.replace('Dona', 'Rare')
+            title = title.replace('Countess', 'Royal')
+            title = title.replace('Lady', 'Royal')
+            title = title.replace('Sir', 'Royal')
+            title = title.replace('Mlle', 'Rare')
+            title = title.replace('Ms', 'Rare')
+            title = title.replace('Mme', 'Rare')
             entry['Title'] = title
         return data
 

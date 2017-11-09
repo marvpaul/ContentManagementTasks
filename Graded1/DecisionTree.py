@@ -1,5 +1,9 @@
 import math
+import random
+
 import Graded1.Node as Node
+
+
 class Tree:
     '''Decision tree class which in represented by a root node dataTree'''
     dataTree = None
@@ -18,6 +22,49 @@ class Tree:
             for entry in data:
                 survived.append((self.getDecision(self.dataTree, entry)))
             return survived
+
+    def createRandomTree(self, data, features):
+        '''
+        Method to determine a random decision tree for given data & features
+        :param data: given trainingsdata
+        :param features: the features we want to split for as an array, f.e. ['Sex', 'Age']
+        '''
+        index = random.randrange(0,len(features))
+        feature = features[index]
+        features.pop(index)
+        self.dataTree = Node.Node(feature)
+        self.getRandomTreeRec(data, features, self.dataTree)
+
+    def getRandomTreeRec(self, data, features, node):
+        '''
+        This method calculates the hopefully best decision tree for given features and data :)
+        See createTree. This is just the recursive method to iterate over each node
+        :param data: given trainingsdata
+        :param features: the features we want to split for as an array, f.e. ['Sex', 'Age']
+        :param node: the last node we have determined
+        '''
+        # This feature is obsolete / used
+        index = random.randrange(0,len(features))
+        feature = features[index]
+        features.pop(index)
+        data, labels = self.splitData(data, node.feature)
+        # For each possible decision get the best fitting feature
+        for label_nr in range(len(labels)):
+
+            nextNode = Node.Node(feature)
+            node.following_nodes.append(nextNode)
+            node.decisions.append(labels[label_nr])
+            if len(features) > 1:
+                self.getRandomTreeRec(data[label_nr], features, nextNode)
+            # end reached
+            else:
+                nextNode.feature = "Survived"
+                sub_data = data[label_nr]
+                props_survived = self.computeSurvivalProp(sub_data)
+                if props_survived[0] >= props_survived[1]:
+                    nextNode.decisions = [0]
+                else:
+                    nextNode.decisions = [1]
 
     def getDecision(self, node, entry):
         '''
@@ -46,10 +93,6 @@ class Tree:
         self.dataTree = Node.Node(features[min_index])
         self.getTreeRec(data, features, self.dataTree)
 
-
-    '''
-    
-    '''
     def getTreeRec(self, data, features, node):
         '''
         This method calculates the hopefully best decision tree for given features and data :)
@@ -58,12 +101,12 @@ class Tree:
         :param features: the features we want to split for as an array, f.e. ['Sex', 'Age']
         :param node: the last node we have determined
         '''
-        #This feature is obsolete / used
+        # This feature is obsolete / used
         localFeatures = features
         localFeatures.remove(node.feature)
 
         data, labels = self.splitData(data, node.feature)
-        #For each possible decision get the best fitting feature
+        # For each possible decision get the best fitting feature
         for label_nr in range(len(labels)):
             entropies = []
             for feature in localFeatures:
@@ -76,7 +119,7 @@ class Tree:
             node.decisions.append(labels[label_nr])
             if len(localFeatures) > 1:
                 self.getTreeRec(data[label_nr], localFeatures, nextNode)
-            #end reached
+            # end reached
             else:
                 nextNode.feature = "Survived"
                 sub_data = data[label_nr]
@@ -109,9 +152,9 @@ class Tree:
             entireEntropy += self.computeEntropy(prop[0]) * prop[1]
         return entireEntropy
 
+    '''
+    '''
 
-    '''
-    '''
     def computeSurvivalProp(self, data):
         '''
         This function compute the probabilities for case survived | not survived
@@ -139,16 +182,17 @@ class Tree:
         :param features: the feature we want to split for In exact this order: firstFeatureToSplit .... lastFeatureToSplit
         :return: some props (Y)
         '''
-        #In case there is no more feature we have to split for return the prop
+        # In case there is no more feature we have to split for return the prop
         if len(features) == 0:
             return self.computeSurvivalProp(data)
         else:
-            #Split the data into feateures[0] values
+            # Split the data into feateures[0] values
             splittedData, labels = self.splitData(data, features[0])
             props = []
-            if len(features)-1 == 0:
+            if len(features) - 1 == 0:
                 for i in range(len(splittedData)):
-                    props.append([self.getPropRec(splittedData[i], features[1:len(features)]), len(splittedData[i]) / len(data)])
+                    props.append(
+                        [self.getPropRec(splittedData[i], features[1:len(features)]), len(splittedData[i]) / len(data)])
             else:
                 for i in range(len(splittedData)):
                     props.append(self.getPropRec(splittedData[i], features[1:len(features)]))
@@ -172,6 +216,7 @@ class Tree:
         for entry in data:
             splittedData[differentValues.index(entry[feature])].append(entry)
         return splittedData, differentValues
+
 
 '''
 Hopefully not necessary anymore :)
