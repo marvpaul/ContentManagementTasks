@@ -54,7 +54,7 @@ class Tree:
             nextNode = Node.Node(feature)
             node.following_nodes.append(nextNode)
             node.decisions.append(labels[label_nr])
-            if len(features) > 1:
+            if len(features) >= 1:
                 self.getRandomTreeRec(data[label_nr], features, nextNode)
             # end reached
             else:

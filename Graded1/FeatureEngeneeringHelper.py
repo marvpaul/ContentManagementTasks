@@ -109,6 +109,7 @@ class FeatureEngineer:
         '''
         for entry in data:
             title = re.search(' ([A-Za-z]+)\.', entry['Name']).group(1)
+
             title = title.replace('Lady', 'Rare')
             title = title.replace('Capt', 'Rare')
             title = title.replace('Col', 'Rare')
@@ -124,6 +125,7 @@ class FeatureEngineer:
             title = title.replace('Mlle', 'Rare')
             title = title.replace('Ms', 'Rare')
             title = title.replace('Mme', 'Rare')
+            title = title.replace('Rarea', 'Rare')
             entry['Title'] = title
         return data
 
@@ -172,5 +174,5 @@ class FeatureEngineer:
         simplifiedData = self.filterTitles(simplifiedData)
         simplifiedData = self.categorizeAge(simplifiedData)
         simplifiedData = self.categorizeFare(data)
-        #simplifiedData = self.createAgeClass(data)
+        simplifiedData = self.createAgeClass(data)
         return simplifiedData
