@@ -43,7 +43,7 @@ class FeatureEngineer:
                 if entry['Title'] == 'Master':
                     entry['Age'] = "1"
                 else:
-                    entry['Age'] = "4"
+                    entry['Age'] = "5"
             elif float(entry['Age']) <= 5:
                 entry['Age'] = "1"
             elif float(entry['Age']) <= 12:
@@ -66,14 +66,6 @@ class FeatureEngineer:
         :return:
         '''
         for entry in data:
-            '''
-            if "A" in entry['Cabin'] or "B" in entry['Cabin'] or "C" in entry['Cabin']:
-                entry['Cabin'] = 1
-            elif "D" in entry['Cabin'] or "E" in entry['Cabin']:
-                entry['Cabin'] = 2
-            else:
-                entry['Cabin'] = 3
-            '''
             if entry['Cabin'] == "":
                 entry['CabinBool'] = 0
             else:
@@ -82,14 +74,6 @@ class FeatureEngineer:
 
     def fillEmbarkedFeature(self, data):
         for entry in data:
-            '''
-            if "A" in entry['Cabin'] or "B" in entry['Cabin'] or "C" in entry['Cabin']:
-                entry['Cabin'] = 1
-            elif "D" in entry['Cabin'] or "E" in entry['Cabin']:
-                entry['Cabin'] = 2
-            else:
-                entry['Cabin'] = 3
-            '''
             if entry['Embarked'] == "S":
                 entry['Embarked'] = 1
             elif entry['Embarked'] == "C":
@@ -110,7 +94,7 @@ class FeatureEngineer:
         for entry in data:
             title = re.search(' ([A-Za-z]+)\.', entry['Name']).group(1)
 
-            title = title.replace('Lady', 'Rare')
+            title = title.replace('Lady', 'Royal')
             title = title.replace('Capt', 'Rare')
             title = title.replace('Col', 'Rare')
             title = title.replace('Don', 'Rare')
@@ -122,9 +106,9 @@ class FeatureEngineer:
             title = title.replace('Countess', 'Royal')
             title = title.replace('Lady', 'Royal')
             title = title.replace('Sir', 'Royal')
-            title = title.replace('Mlle', 'Rare')
-            title = title.replace('Ms', 'Rare')
-            title = title.replace('Mme', 'Rare')
+            title = title.replace('Mlle', 'Miss')
+            title = title.replace('Ms', 'Miss')
+            title = title.replace('Mme', 'Mrs')
             title = title.replace('Rarea', 'Rare')
             entry['Title'] = title
         return data
