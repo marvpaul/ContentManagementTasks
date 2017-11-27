@@ -4,7 +4,6 @@ class RandomForest:
     random_forest = None
     accuracies = []
 
-    #The results we know about - TODO: Split trainingsdata into train and test data to get a better accuracy
     test_results = []
 
     def __init__(self, number_trees, data, features) -> None:
@@ -17,8 +16,7 @@ class RandomForest:
         super().__init__()
         trees = []
         for i in range(number_trees):
-            #TODO: STH went wrong here, fix this :)
-            features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'SibSp', 'AgeClass']#CabinBool, Embarked
+            features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp', 'Embarked']#CabinBool, Embarked
             tree1 = tree.Tree()
             tree1.createRandomTree(data, features)
             trees.append(tree1)

@@ -34,8 +34,6 @@ train_data = processor.get('train.csv')
 
 train_data_edited = feature_processor.createAwesomeDataset(train_data)
 
-
-
 #Features to use for decision tree
 features = ['Sex', 'Family_size', 'Age', 'Pclass', 'CabinBool', 'Embarked'] #  'Title'
 

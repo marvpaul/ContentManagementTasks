@@ -71,7 +71,7 @@ for entry in evaluation_data:
     real_survived.append(int(entry['Survived']))
 
 #Features to use for decision tree
-features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp', 'Embarked'] #  'Title',  'Embarked', 'CabinBOol'
+features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp', 'Embarked']
 
 #Get a forest with at least the given probability
 tree2, survived_rnd = getRndTreeWithGivenProp(train_data_edited, 0.832)

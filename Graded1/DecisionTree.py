@@ -216,17 +216,3 @@ class Tree:
         for entry in data:
             splittedData[differentValues.index(entry[feature])].append(entry)
         return splittedData, differentValues
-
-
-'''
-Hopefully not necessary anymore :)
-    This just normalize the prop data, because there where some problem while storing them in a list in the recursion
-    prop_norm = []
-    def norm_props(self, props):
-        for prop in props:
-            if len(prop) == 2 and type(prop[0]) is list and type(prop[1]) is float:
-                self.prop_norm.append(prop)
-            else:
-                self.norm_props(prop)
-        return self.prop_norm
-'''
