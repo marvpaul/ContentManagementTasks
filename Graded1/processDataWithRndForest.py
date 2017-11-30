@@ -41,14 +41,14 @@ def getRndTreeWithGivenProp(train_data_edited, wishedProp):
     :return: random trees with at least an accuracy of wishedProp
     '''
     num_of_trees = 3
-    random_trees = rnd_forest.RandomForest(num_of_trees, train_data_edited, features)
+    random_trees = rnd_forest.RandomForest(num_of_trees, train_data_edited)
     survived_rnd = random_trees.evaluteData(train_data_edited)
 
     result = getResult(real_survived, survived_rnd)
 
     #Search for a coool forest :)
     while(result < wishedProp):
-        random_trees = rnd_forest.RandomForest(num_of_trees, train_data_edited, features)
+        random_trees = rnd_forest.RandomForest(num_of_trees, train_data_edited)
         survived_rnd = random_trees.evaluteData(evaluation_data)
         result = getResult(real_survived, survived_rnd)
 
@@ -70,8 +70,6 @@ real_survived = []
 for entry in evaluation_data:
     real_survived.append(int(entry['Survived']))
 
-#Features to use for decision tree
-features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp', 'Embarked']
 
 #Get a forest with at least the given probability
 tree2, survived_rnd = getRndTreeWithGivenProp(train_data_edited, 0.832)

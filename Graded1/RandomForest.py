@@ -6,7 +6,7 @@ class RandomForest:
 
     test_results = []
 
-    def __init__(self, number_trees, data, features) -> None:
+    def __init__(self, number_trees, data) -> None:
         '''
         Creates number_trees random trees and add them to the instance var random_forest
         :param number_trees: the number of trees to create
@@ -16,7 +16,7 @@ class RandomForest:
         super().__init__()
         trees = []
         for i in range(number_trees):
-            features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp', 'Embarked']#CabinBool, Embarked
+            features = ['Sex', 'Family_size', 'Age', 'Pclass', 'Title', 'CabinBool', 'SibSp']#CabinBool, Embarked
             tree1 = tree.Tree()
             tree1.createRandomTree(data, features)
             trees.append(tree1)
@@ -32,7 +32,7 @@ class RandomForest:
             data.append(tree_data)
             #self.accuracies.append(self.getAccuracy(tree_data))
         result = []
-        #Go through all results and decide which entry we should use with simple voting TODO: Implement voting with accuracy
+        #Go through all results and decide which entry we should use with simple voting
         for i in range(len(data[0])):
             numSurvived = 0
             numDied = 0
