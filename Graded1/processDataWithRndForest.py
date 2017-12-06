@@ -72,7 +72,7 @@ for entry in evaluation_data:
 
 
 #Get a forest with at least the given probability
-tree2, survived_rnd = getRndTreeWithGivenProp(train_data_edited, 0.832)
+tree2, survived_rnd = getRndTreeWithGivenProp(train_data_edited, 0.831)
 print(getResult(real_survived, survived_rnd))
 
 loadAndEvaluateTestData(tree2)
