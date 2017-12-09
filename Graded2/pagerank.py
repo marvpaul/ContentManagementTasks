@@ -2,6 +2,7 @@ from os import listdir
 from os.path import join, isfile
 import numpy as np
 from htmldom import htmldom
+from copy import deepcopy
 
 
 def analyzeDocs():
@@ -42,8 +43,62 @@ def apply_teleportation_rate(link_matrix):
             link_matrix[row] = np.ones(len(link_matrix)) * (1/len(link_matrix))
     return link_matrix
 
-links = analyzeDocs()
-link_matrix_with_teleportation = apply_teleportation_rate(links)
+def get_sites_with_link_to_site(site, link_matrix):
+    sites_with_link_to_site = []
+    for scanned_site in range(len(link_matrix)):
+        if link_matrix[scanned_site][site] != 0:
+            sites_with_link_to_site.append(scanned_site)
+    return sites_with_link_to_site
 
+def get_page_ranks(actual_pageranks, link_matrix, t):
+    '''
+    Calculate the page rank after one iteration
+    :param actual_pageranks: the given page ranks
+    :param link_matrix: the link matrix
+    :return: the new page ranks
+    '''
+    d = 1 - t
+    new_ranks = []
+    for page_rank in range(len(actual_pageranks)):
+        sites_with_link_to_actual_sites = get_sites_with_link_to_site(page_rank, link_matrix)
+        sum1 = 0
+        for site in sites_with_link_to_actual_sites:
+            sum1 += actual_pageranks[site] / sum(link_matrix[site])
+
+
+        sites_with_null_links = []
+        for site in range(len(link_matrix)):
+            if sum(link_matrix[site]) == 0:
+                sites_with_null_links.append(site)
+
+        sum2 = 0
+        for site in sites_with_null_links:
+            sum2 += actual_pageranks[site] / len(actual_pageranks)
+
+        new_ranks.append(d * (sum1 + sum2) + t / len(actual_pageranks))
+
+    return new_ranks
+
+links = analyzeDocs()
+link_matrix_with_teleportation = apply_teleportation_rate(deepcopy(links))
 
 gamma = 0.04
+pagerankgs = 1 / (len(link_matrix_with_teleportation) * np.ones(len(link_matrix_with_teleportation)))
+new_ranks = get_page_ranks(pagerankgs, links, 0.05)
+act_gamma = 0
+for rank in range(len(pagerankgs)):
+    act_gamma += abs(pagerankgs[rank] - new_ranks[rank])
+
+print(links)
+
+while act_gamma > gamma:
+    print("ranks applied!")
+    pagerankgs = new_ranks
+    new_ranks = get_page_ranks(pagerankgs, links, 0.05)
+    act_gamma = 0
+    for rank in range(len(pagerankgs)):
+        act_gamma += abs(pagerankgs[rank] - new_ranks[rank])
+
+print(pagerankgs)
+#TODO: These values shouldn't be the right values, because f.e. pg 1 has 3 backlinks, 7 has only 1 backlink
+#Perhaps there is a failure?
