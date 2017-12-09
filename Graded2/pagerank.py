@@ -61,44 +61,46 @@ def get_page_ranks(actual_pageranks, link_matrix, t):
     new_ranks = []
     for page_rank in range(len(actual_pageranks)):
         sites_with_link_to_actual_sites = get_sites_with_link_to_site(page_rank, link_matrix)
-        sum1 = 0
-        for site in sites_with_link_to_actual_sites:
-            sum1 += actual_pageranks[site] / sum(link_matrix[site])
 
+        sum1 = sum([actual_pageranks[site] / sum(link_matrix[site]) for site in sites_with_link_to_actual_sites])
 
+        #Get all sites which has 0 links to other sites
         sites_with_null_links = []
         for site in range(len(link_matrix)):
             if sum(link_matrix[site]) == 0:
                 sites_with_null_links.append(site)
 
-        sum2 = 0
-        for site in sites_with_null_links:
-            sum2 += actual_pageranks[site] / len(actual_pageranks)
+        sum2 = sum([actual_pageranks[site] / len(actual_pageranks) for site in sites_with_null_links])
 
         new_ranks.append(d * (sum1 + sum2) + t / len(actual_pageranks))
 
     return new_ranks
 
 links = analyzeDocs()
+print("Links to other sites:")
+print(links)
+#Obsolete?
 link_matrix_with_teleportation = apply_teleportation_rate(deepcopy(links))
 
 gamma = 0.04
 pagerankgs = 1 / (len(link_matrix_with_teleportation) * np.ones(len(link_matrix_with_teleportation)))
-new_ranks = get_page_ranks(pagerankgs, links, 0.05)
+new_ranks = pagerankgs
 act_gamma = 0
-for rank in range(len(pagerankgs)):
-    act_gamma += abs(pagerankgs[rank] - new_ranks[rank])
 
-print(links)
 
-while act_gamma > gamma:
-    print("ranks applied!")
-    pagerankgs = new_ranks
+first_pass = True
+while np.array_equal(new_ranks, pagerankgs) or first_pass:
+    first_pass = False
+
     new_ranks = get_page_ranks(pagerankgs, links, 0.05)
     act_gamma = 0
     for rank in range(len(pagerankgs)):
         act_gamma += abs(pagerankgs[rank] - new_ranks[rank])
 
+    if act_gamma > gamma:
+        pagerankgs = new_ranks
+
+print("Page ranks:")
 print(pagerankgs)
 #TODO: These values shouldn't be the right values, because f.e. pg 1 has 3 backlinks, 7 has only 1 backlink
 #Perhaps there is a failure?
