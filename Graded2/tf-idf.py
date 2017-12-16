@@ -31,5 +31,5 @@ for doc in parsed_docs:
             tidf[term] = (1+ math.log10(doc[site_content][term])) * dfs[term]
         tidfs[site_content] = tidf
 
-with open('tfids.txt', 'a') as the_file:
+with open('tf-idf.txt', 'a') as the_file:
     the_file.write(str(tidfs))
