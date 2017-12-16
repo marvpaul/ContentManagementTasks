@@ -67,5 +67,5 @@ for file in scraped_files:
     print("{", file, ": ", count_words(file_content), "}")
     output += "{\"" + file + "\" : " + str(count_words(file_content)).replace("\'", "\"") + "}\n"
 
-with open('index.txt', 'a') as the_file:
+with open('index.txt', 'a') as the_file: 
     the_file.write(output)
