@@ -6,18 +6,30 @@ with open("index.txt") as f:
 
 content = [x.strip() for x in content]
 docs = len(content)
-idfs = {}
-for page in content:
-    websiteTF = json.loads(page)
-    for site in websiteTF:
-        for tf in websiteTF[site]:
-            if tf in idfs:
-                idfs[tf] += 1
-            else:
-                idfs[tf] = 1
+parsed_docs = []
+for doc in content:
+    parsed_docs.append(json.loads(doc))
 
-for entry in idfs:
-    idfs[entry] = math.log10(docs / idfs[entry])
+dfs = {}
+for page in parsed_docs:
+    for site in page:
+        for term in page[site]:
+            if term in dfs:
+                dfs[term] += 1
+            else:
+                dfs[term] = 1
+
+for entry in dfs:
+    dfs[entry] = math.log10(docs / dfs[entry])
+
+tidfs = {}
+
+for doc in parsed_docs:
+    tidf = {}
+    for site_content in doc:
+        for term in doc[site_content]:
+            tidf[term] = (1+ math.log10(doc[site_content][term])) * dfs[term]
+        tidfs[site_content] = tidf
 
 with open('tfids.txt', 'a') as the_file:
-    the_file.write(str(idfs))
+    the_file.write(str(tidfs))
