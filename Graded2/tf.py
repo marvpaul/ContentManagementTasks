@@ -57,12 +57,15 @@ scraped_files = []
 for file in files:
     if "html" in file:
         scraped_files.append(file)
-print(scraped_files)
 
+output = ""
 for file in scraped_files:
     f = open("tutorial/" + file, 'r+')
     file_content = (f.readlines())
     file_content = ''.join(file_content)
     file_content = prepare_text(file_content)
-    print(count_words(file_content))
+    print("{", file, ": ", count_words(file_content), "}")
+    output += "{\"" + file + "\" : " + str(count_words(file_content)).replace("\'", "\"") + "}\n"
 
+with open('index.txt', 'a') as the_file:
+    the_file.write(output)

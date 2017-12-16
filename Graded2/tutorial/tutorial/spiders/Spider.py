@@ -16,13 +16,12 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         page = response.url.split("/")
-        page = page[len(page)-1]
+        page = page[len(page) - 1]
         self.crawled_sites.append(page)
         filename = '%s' % page
         with open(filename, 'wb') as f:
             f.write(response.body)
         self.log('Saved file %s' % filename)
-
 
         for href in response.css('a::attr(href)'):
             if href not in self.crawled_sites:
