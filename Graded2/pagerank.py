@@ -2,55 +2,44 @@ from os import listdir
 from os.path import join, isfile
 import numpy as np
 from htmldom import htmldom
-from copy import deepcopy
 
 
 def analyzeDocs():
     '''Analyze the given docs and return a link matrix'''
-    files = [f for f in listdir("tutorial/") if isfile(join("tutorial/", f))]
+    files = [f for f in listdir("crawler/") if isfile(join("crawler/", f))]
+    doc_and_links = {}
     scraped_files = []
+
+    #Get the files to analyze
     for file in files:
         if "html" in file:
             scraped_files.append(file)
-    scraped_files = sorted(scraped_files)
+            doc_and_links[file] = []
 
-    link_matrix = np.zeros(shape=(len(scraped_files), len(scraped_files)))
-    for file in range(len(scraped_files)):
-        f = open("tutorial/" + scraped_files[file], 'r+')
+    #Analyze and parse the links from each site to another
+    for document in doc_and_links:
+        f = open("crawler/" + document, 'r+')
         file_content = ''.join(f.readlines())
         archive_html = htmldom.HtmlDom().createDom(file_content)
         links = archive_html.find('a')
         for link in links:
-            link_matrix[file, scraped_files.index(link.attr('href'))] += 1
-    return link_matrix
+            doc_and_links[document].append(link.attr('href'))
+    return doc_and_links
 
-def apply_teleportation_rate(link_matrix):
-    t = 0.05
-    d = 1 - t
-    for row in range(len(link_matrix)):
-        if sum(link_matrix[row]) != 0:
-            active_links = list(link_matrix[row]).count(1)
-            rate_without_teleportation = 0
-            if active_links != 0:
-                rate_without_teleportation = 1 / active_links
-
-            for link in range(len(link_matrix[row])):
-                if link_matrix[row][link] == 0:
-                    link_matrix[row][link] = t / len(link_matrix[row])
-                else:
-                    link_matrix[row][link] = rate_without_teleportation * d + t / len(link_matrix[row])
-        else:
-            link_matrix[row] = np.ones(len(link_matrix)) * (1/len(link_matrix))
-    return link_matrix
-
-def get_sites_with_link_to_site(site, link_matrix):
+def get_sites_with_link_to_site(site, links):
+    '''
+    This method return all sites which include a link to site site
+    :param site: the site we are searching for in the links of any other site
+    :param links: all sites and links as dic
+    :return: all sites which include a link to site site
+    '''
     sites_with_link_to_site = []
-    for scanned_site in range(len(link_matrix)):
-        if link_matrix[scanned_site][site] != 0:
-            sites_with_link_to_site.append(scanned_site)
+    for document in links:
+        if site in links[document]:
+            sites_with_link_to_site.append(document)
     return sites_with_link_to_site
 
-def get_page_ranks(actual_pageranks, link_matrix, t):
+def get_page_ranks(actual_pageranks, links, t):
     '''
     Calculate the page rank after one iteration
     :param actual_pageranks: the given page ranks
@@ -58,49 +47,56 @@ def get_page_ranks(actual_pageranks, link_matrix, t):
     :return: the new page ranks
     '''
     d = 1 - t
-    new_ranks = []
-    for page_rank in range(len(actual_pageranks)):
-        sites_with_link_to_actual_sites = get_sites_with_link_to_site(page_rank, link_matrix)
-
-        sum1 = sum([actual_pageranks[site] / sum(link_matrix[site]) for site in sites_with_link_to_actual_sites])
+    new_ranks = {}
+    for page_rank in pageranks:
+        #Calculate sum 1 for pagerank
+        sites_with_link_to_actual_sites = get_sites_with_link_to_site(page_rank, links)
+        sum1 = sum([actual_pageranks[site] / len(links[site]) for site in sites_with_link_to_actual_sites])
 
         #Get all sites which has 0 links to other sites
         sites_with_null_links = []
-        for site in range(len(link_matrix)):
-            if sum(link_matrix[site]) == 0:
+        for site in links:
+            if len(links[site]) == 0:
                 sites_with_null_links.append(site)
 
         sum2 = sum([actual_pageranks[site] / len(actual_pageranks) for site in sites_with_null_links])
 
-        new_ranks.append(d * (sum1 + sum2) + t / len(actual_pageranks))
+        #Apply new page rank
+        new_ranks[page_rank] = (d * (sum1 + sum2) + t / len(actual_pageranks))
 
     return new_ranks
 
 links = analyzeDocs()
-print("Links to other sites:")
+print("Links from each site to each other site:")
 print(links)
-#Obsolete?
-link_matrix_with_teleportation = apply_teleportation_rate(deepcopy(links))
 
+#Make some initial assigments
 gamma = 0.04
-pagerankgs = 1 / (len(link_matrix_with_teleportation) * np.ones(len(link_matrix_with_teleportation)))
-new_ranks = pagerankgs
+initial_page_rank = 1 / (len(links))
+pageranks = {}
+for doc in links:
+    pageranks[doc] = initial_page_rank
+new_ranks = pageranks
 act_gamma = 0
 
-
+#Calculate a new page rank as long as the actual gamma is smaller than the given gamma
 first_pass = True
-while np.array_equal(new_ranks, pagerankgs) or first_pass:
+while new_ranks != pageranks or first_pass:
     first_pass = False
 
-    new_ranks = get_page_ranks(pagerankgs, links, 0.05)
+    new_ranks = get_page_ranks(pageranks, links, 0.05)
     act_gamma = 0
-    for rank in range(len(pagerankgs)):
-        act_gamma += abs(pagerankgs[rank] - new_ranks[rank])
+    for rank in pageranks:
+        act_gamma += abs(pageranks[rank] - new_ranks[rank])
 
     if act_gamma > gamma:
-        pagerankgs = new_ranks
+        pageranks = new_ranks
 
+#Hopefully determined the correct page ranks
 print("Page ranks:")
-print(pagerankgs)
-#TODO: These values shouldn't be the right values, because f.e. pg 1 has 3 backlinks, 7 has only 1 backlink
-#Perhaps there is a failure?
+print(pageranks)
+
+#Save the ranks
+open('rank.txt', 'w').close()
+with open('rank.txt', 'a') as the_file:
+    the_file.write(str(pageranks))

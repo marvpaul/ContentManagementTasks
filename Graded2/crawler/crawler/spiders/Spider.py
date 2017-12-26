@@ -1,7 +1,7 @@
 import scrapy
 
 
-class QuotesSpider(scrapy.Spider):
+class SiteSpider(scrapy.Spider):
     name = "crawler"
     crawled_sites = []
 
@@ -19,7 +19,7 @@ class QuotesSpider(scrapy.Spider):
         page = page[len(page) - 1]
         self.crawled_sites.append(page)
         filename = '%s' % page
-        with open(filename, 'wb') as f:
+        with open('../' + filename, 'wb') as f:
             f.write(response.body)
         self.log('Saved file %s' % filename)
 

@@ -1,12 +1,17 @@
 import json
 import math
+#Read the term frequencies
+with open("index.txt") as f:
+    content = f.readlines()
 
+with open('rank.txt') as f:
+    ranks = f.readlines()
+
+content = [x.strip() for x in content]
+ranks = ranks[0].replace("\'", "\"")
+ranks = json.loads(ranks)
 def search(query):
-    #Read the term frequencies
-    with open("index.txt") as f:
-        content = f.readlines()
 
-    content = [x.strip() for x in content]
 
     #Add the search query to tf dic
     search_query_words = query.split(" ")
@@ -61,10 +66,13 @@ def search(query):
     search_query = tidfs.pop("search_query")
     match = {}
     for doc in normalized_vecs:
-        match[doc] = 0
+        tf_idf_doc = 0
         for value in search_query:
             if value in normalized_vecs[doc]:
-                match[doc] += search_query[value] * normalized_vecs[doc][value]
+                tf_idf_doc += search_query[value] * normalized_vecs[doc][value]
+        #Using the harmonic mean as mentioned here to reduce score in case on of the two factors is really low
+        # https://stackoverflow.com/questions/14940569/combining-tf-idf-cosine-similarity-with-pagerank
+        match[doc] =2*(tf_idf_doc * ranks[doc]) / (tf_idf_doc + ranks[doc])
     return match
 
 #Lets do a search for the given queries and save results in tfidf_search
@@ -75,5 +83,8 @@ for query in search_queries:
 
 print("Results:")
 print(result)
-with open('tfidf_search.txt', 'a') as the_file:
+
+#Save the results
+open('pageranke_search.txt', 'w').close()
+with open('pageranke_search.txt', 'a') as the_file:
     the_file.write(result)

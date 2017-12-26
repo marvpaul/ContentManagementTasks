@@ -51,7 +51,7 @@ def count_words(text):
             dic[word] = 1
     return dic
 
-files = [f for f in listdir("tutorial/") if isfile(join("tutorial/", f))]
+files = [f for f in listdir("crawler/") if isfile(join("crawler/", f))]
 scraped_files = []
 
 for file in files:
@@ -60,12 +60,13 @@ for file in files:
 
 output = ""
 for file in scraped_files:
-    f = open("tutorial/" + file, 'r+')
+    f = open("crawler/" + file, 'r+')
     file_content = (f.readlines())
     file_content = ''.join(file_content)
     file_content = prepare_text(file_content)
     print("{", file, ": ", count_words(file_content), "}")
     output += "{\"" + file + "\" : " + str(count_words(file_content)).replace("\'", "\"") + "}\n"
 
+open('index.txt', 'w').close()
 with open('index.txt', 'a') as the_file: 
     the_file.write(output)
