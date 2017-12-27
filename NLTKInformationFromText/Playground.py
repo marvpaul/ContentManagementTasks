@@ -58,6 +58,12 @@ result = cp.parse(speed_tags[0])
 print(result)
 result.draw()'''
 
+
+doc = nltk.corpus.ieer.parsed_docs('NYT_19980315')
+for text in doc:
+    print(text.text)
+
+
 sentence = "his Mansion House speech the price cutting CD to CD more than the fastest developing trends skill."
 tokenized = [nltk.word_tokenize(sentence)]
 speed_tags = [nltk.pos_tag(token) for token in tokenized]
