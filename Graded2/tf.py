@@ -65,6 +65,7 @@ for file in scraped_files:
     file_content = ''.join(file_content)
     file_content = prepare_text(file_content)
     print("{", file, ": ", count_words(file_content), "}")
+    #Create valid json
     output += "{\"" + file + "\" : " + str(count_words(file_content)).replace("\'", "\"") + "}\n"
 
 open('index.txt', 'w').close()
